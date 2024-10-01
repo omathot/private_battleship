@@ -1,4 +1,4 @@
-pub mod entities;
+mod entities;
 
 use palette::{rgb::Rgb, Srgb};
 use thiserror::Error;
@@ -25,6 +25,7 @@ impl GameSettings {
 #[cfg(test)]
 mod game_tests {
     use entities::{Board, Cell, Ship, ShipModel};
+    use palette::cast::TryComponentsInto;
 
     use super::*;
 
@@ -152,5 +153,59 @@ mod game_tests {
         assert_eq!(Cell::Ship, board.cells()[3][0]);
         assert_eq!(Cell::Ship, board.cells()[4][0]);
         println!("{}", board);
+    }
+
+    #[test]
+    fn rotate_from_zero_zero() {
+        let mut board = Board::default();
+        let mut ship = Ship::from(ShipModel::Carrier);
+        ship.place(&mut board);
+        ship.rotate(&mut board);
+        println!("{}", board);
+        assert_eq!(Cell::Ship, board.cells()[0][0]);
+        assert_eq!(Cell::Ship, board.cells()[0][9]);
+        assert_eq!(Cell::Ship, board.cells()[0][8]);
+        assert_eq!(Cell::Ship, board.cells()[0][7]);
+        assert_eq!(Cell::Ship, board.cells()[0][6]);
+
+        assert_eq!(Cell::Empty, board.cells()[1][0]);
+        assert_eq!(Cell::Empty, board.cells()[2][0]);
+    }
+
+    #[test]
+    fn rotate_from_zero_zero_twice() {
+        let mut board = Board::default();
+        let mut ship = Ship::from(ShipModel::Carrier);
+        ship.place(&mut board);
+        ship.rotate(&mut board);
+        ship.rotate(&mut board);
+        println!("{}", board);
+        assert_eq!(Cell::Ship, board.cells()[0][0]);
+        assert_eq!(Cell::Ship, board.cells()[9][0]);
+        assert_eq!(Cell::Ship, board.cells()[8][0]);
+        assert_eq!(Cell::Ship, board.cells()[7][0]);
+        assert_eq!(Cell::Ship, board.cells()[6][0]);
+
+        assert_eq!(Cell::Empty, board.cells()[0][9]);
+        assert_eq!(Cell::Empty, board.cells()[0][8]);
+    }
+
+    #[test]
+    fn rotate_from_zero_zero_thrice() {
+        let mut board = Board::default();
+        let mut ship = Ship::from(ShipModel::Carrier);
+        ship.place(&mut board);
+        ship.rotate(&mut board);
+        ship.rotate(&mut board);
+        ship.rotate(&mut board);
+        println!("{}", board);
+        assert_eq!(Cell::Ship, board.cells()[0][0]);
+        assert_eq!(Cell::Ship, board.cells()[0][1]);
+        assert_eq!(Cell::Ship, board.cells()[0][2]);
+        assert_eq!(Cell::Ship, board.cells()[0][3]);
+        assert_eq!(Cell::Ship, board.cells()[0][4]);
+
+        assert_eq!(Cell::Empty, board.cells()[9][0]);
+        assert_eq!(Cell::Empty, board.cells()[8][0]);
     }
 }
